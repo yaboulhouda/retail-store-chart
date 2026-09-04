@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "catalog-mysql.fullname" . }}
+  labels:
+    {{- include "catalog-mysql.labels" . | nindent 4 }}
+data:
+  MARIADB_USER: "{{ .Values.global.mysql.username }}"
+  MARIADB_DATABASE: "{{ .Values.global.mysql.dbname }}"

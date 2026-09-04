@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "checkout-redis.labels" . | nindent 4 }}
+  name: {{ include "checkout-redis.fullname" . }}
+spec:
+  replicas: {{ .Values.deployment.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "checkout-redis.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "checkout-redis.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - image: "{{ .Values.deployment.image }}:{{ .Values.deployment.tag }}"
+          name: redis
+          ports:
+            - containerPort: {{ include "checkout-redis.port" . }}
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+          resources: {}

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "catalog-mysql.fullname" . }}
+  labels:
+    {{- include "catalog-mysql.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ include "catalog-mysql.port" . }}
+      targetPort: {{ include "catalog-mysql.port" . }}
+      protocol: TCP
+  selector:
+    {{- include "catalog-mysql.selectorLabels" . | nindent 4 }}

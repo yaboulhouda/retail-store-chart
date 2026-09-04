@@ -1,0 +1,5 @@
+deployment:
+  replicaCount: 1
+  image: redis
+  tag: 6.0-alpine
+fullnameOverride: checkout-redis

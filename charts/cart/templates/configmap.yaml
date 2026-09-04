@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "cart.fullname" . }}
+  labels:
+    {{- include "cart.labels" . | nindent 4 }}
+data:
+  RETAIL_CART_PERSISTENCE_PROVIDER: {{ .Values.dynamodb.provider }}
+  RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT: "http://{{ .Values.global.dynamodb.host }}:{{ .Values.global.dynamodb.port }}"
+  RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE: {{ .Values.dynamodb.createTable | quote}}
+  RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME: {{ .Values.dynamodb.tableName }}

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "orders.labels" . | nindent 4 }}
+  name: {{ include "orders.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "orders.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "orders.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: orders
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: RETAIL_ORDERS_PERSISTENCE_PROVIDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "orders.fullname" . }}
+                key: RETAIL_ORDERS_PERSISTENCE_PROVIDER
+          - name: RETAIL_ORDERS_PERSISTENCE_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "orders.fullname" . }}
+                key: RETAIL_ORDERS_PERSISTENCE_ENDPOINT
+          - name: RETAIL_ORDERS_PERSISTENCE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.postgres.host }}
+                key: POSTGRES_DB
+          - name: RETAIL_ORDERS_PERSISTENCE_USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.postgres.host }}
+                key: POSTGRES_USER
+          - name: RETAIL_ORDERS_PERSISTENCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.postgres.host }}
+                key: POSTGRES_PASSWORD
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+        resources: {}
+status: {}

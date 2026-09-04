@@ -1,0 +1,36 @@
+global:
+  redis:
+    host: checkout-redis
+    port: 6379
+  postgres:
+    host: orders-postgres
+    port: 5432
+    provider: postgres
+    username: postgres
+    dbname: orders
+  dynamodb:
+    host: cart-dynamodb
+    port: 8000
+  mysql:
+    host: catalog-mysql
+    port: 3306
+    provider: mysql
+    username: catalog_user
+    dbname: catalogdb
+
+checkout-redis:
+  enabled: true
+checkout:
+  enabled: true
+orders-postgres:
+  enabled: true
+orders:
+  enabled: true
+cart-dynamodb:
+  enabled: true
+cart:
+  enabled: true
+catalog-mysql:
+  enabled: true
+catalog:
+  enabled: true

@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "catalog.labels" . | nindent 4 }}
+  name: {{ include "catalog.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "catalog.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "catalog.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: catalog
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: RETAIL_CATALOG_PERSISTENCE_PROVIDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "catalog.fullname" . }}
+                key: RETAIL_CATALOG_PERSISTENCE_PROVIDER
+          - name: RETAIL_CATALOG_PERSISTENCE_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "catalog.fullname" . }}
+                key: RETAIL_CATALOG_PERSISTENCE_ENDPOINT
+          - name: RETAIL_CATALOG_PERSISTENCE_DB_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.mysql.host }}
+                key: MARIADB_DATABASE
+          - name: RETAIL_CATALOG_PERSISTENCE_USER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.global.mysql.host }}
+                key: MARIADB_USER
+          - name: RETAIL_CATALOG_PERSISTENCE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.global.mysql.host }}
+                key: MARIADB_PASSWORD
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+        resources: {}
+status: {}

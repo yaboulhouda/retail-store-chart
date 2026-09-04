@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "cart.labels" . | nindent 4 }}
+  name: {{ include "cart.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "cart.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "cart.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: cart
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: RETAIL_CART_PERSISTENCE_PROVIDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: RETAIL_CART_PERSISTENCE_PROVIDER
+          - name: RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT
+          - name: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
+          - name: RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ include "cart.fullname" . }}
+                key: AWS_SECRET_ACCESS_KEY
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+        resources: {}
+status: {}

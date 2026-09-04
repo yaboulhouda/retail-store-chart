@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "checkout.labels" . | nindent 4 }}
+  name: {{ include "checkout.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "checkout.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "checkout.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: checkout
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: RETAIL_CHECKOUT_PERSISTENCE_PROVIDER
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "checkout.fullname" . }}
+                key: RETAIL_CHECKOUT_PERSISTENCE_PROVIDER
+          - name: RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "checkout.fullname" . }}
+                key: RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+        resources: {}
+status: {}

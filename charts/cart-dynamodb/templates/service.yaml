@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "cart-dynamodb.fullname" . }}
+  labels:
+    {{- include "cart-dynamodb.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ include "cart-dynamodb.port" . }}
+      targetPort: {{ include "cart-dynamodb.port" . }}
+      protocol: TCP
+  selector:
+    {{- include "cart-dynamodb.selectorLabels" . | nindent 4 }}

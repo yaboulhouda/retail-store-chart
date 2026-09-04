@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ui.fullname" . }}
+  labels:
+    {{- include "ui.labels" . | nindent 4 }}
+data:
+  RETAIL_UI_ENDPOINTS_CATALOG: {{ .Values.endpoints.catalog }}
+  RETAIL_UI_ENDPOINTS_CARTS: {{ .Values.endpoints.cart }}
+  RETAIL_UI_ENDPOINTS_CHECKOUT: {{ .Values.endpoints.checkout }}
+  RETAIL_UI_ENDPOINTS_ORDERS: {{ .Values.endpoints.orders }}

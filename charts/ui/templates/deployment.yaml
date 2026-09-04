@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    {{- include "ui.labels" . | nindent 4 }}
+  name: {{ include "ui.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ui.selectorLabels" . | nindent 6 }}
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        {{- include "ui.labels" . | nindent 8 }}
+    spec:
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: ui
+        ports:
+          - containerPort: {{ .Values.service.targetPort }}
+        env:
+          - name: RETAIL_UI_ENDPOINTS_CATALOG
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "ui.fullname" . }}
+                key: RETAIL_UI_ENDPOINTS_CATALOG
+          - name: RETAIL_UI_ENDPOINTS_CARTS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "ui.fullname" . }}
+                key: RETAIL_UI_ENDPOINTS_CARTS
+          - name: RETAIL_UI_ENDPOINTS_CHECKOUT
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "ui.fullname" . }}
+                key: RETAIL_UI_ENDPOINTS_CHECKOUT
+          - name: RETAIL_UI_ENDPOINTS_ORDERS
+            valueFrom:
+              configMapKeyRef:
+                name: {{ include "ui.fullname" . }}
+                key: RETAIL_UI_ENDPOINTS_ORDERS
+        livenessProbe:
+          httpGet:
+            path: {{ .Values.livenessProbe.httpGet.path }}
+            port: {{ .Values.livenessProbe.httpGet.port }}
+        readinessProbe:
+          httpGet:
+            path: {{ .Values.readinessProbe.httpGet.path }}
+            port: {{ .Values.readinessProbe.httpGet.port }}
+        resources: {}
+status: {}
