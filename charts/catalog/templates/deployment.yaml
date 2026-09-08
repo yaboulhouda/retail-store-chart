@@ -55,5 +55,10 @@ spec:
           httpGet:
             path: {{ .Values.readinessProbe.httpGet.path }}
             port: {{ .Values.readinessProbe.httpGet.port }}
-        resources: {}
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
 status: {}
