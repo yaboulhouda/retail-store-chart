@@ -35,5 +35,5 @@ readinessProbe:
 
 dynamodb:
   provider: dynamodb
-  createTable: true
+  createTable: false
   tableName: Items
