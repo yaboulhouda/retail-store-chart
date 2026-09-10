@@ -23,10 +23,6 @@ service:
   port: 8080
   targetPort: 8080
 
-configMap:
-  provider: redis
-  url: redis://checkout-redis:6379
-
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:

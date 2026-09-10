@@ -16,20 +16,17 @@ spec:
         {{- include "checkout.labels" . | nindent 8 }}
     spec:
       containers:
-      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      - image: "{{ .Values.global.ecrRegistry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: checkout
         ports:
           - containerPort: {{ .Values.service.targetPort }}
         env:
           - name: RETAIL_CHECKOUT_PERSISTENCE_PROVIDER
-            valueFrom:
-              configMapKeyRef:
-                name: {{ include "checkout.fullname" . }}
-                key: RETAIL_CHECKOUT_PERSISTENCE_PROVIDER
+            value: {{ .Values.global.redis.provider }}
           - name: RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: {{ include "checkout.fullname" . }}
                 key: RETAIL_CHECKOUT_PERSISTENCE_REDIS_URL
         livenessProbe:

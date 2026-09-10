@@ -1,36 +1,29 @@
 global:
-  redis:
-    host: checkout-redis
-    port: 6379
   postgres:
-    host: orders-postgres
-    port: 5432
-    provider: postgres
-    username: postgres
-    dbname: orders
-  dynamodb:
-    host: cart-dynamodb
-    port: 8000
+    provider: "postgres"
+    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-33186fd9-9123-47e2-b6cc-78f27023c8e3-QYGZdq"
   mysql:
-    host: catalog-mysql
-    port: 3306
-    provider: mysql
-    username: catalog_user
-    dbname: catalogdb
-
+    provider: "mysql"
+    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-85fd5038-f75b-411b-9bb5-703e5f94ed9a-lpKgiE"
+  redis:
+    provider: "redis"
+  env: "dev"
+  ecrRegistry: "745838912158.dkr.ecr.eu-north-1.amazonaws.com/retail-store"
 checkout-redis:
-  enabled: true
+  enabled: false
 checkout:
   enabled: true
 orders-postgres:
-  enabled: true
+  enabled: false
 orders:
   enabled: true
 cart-dynamodb:
-  enabled: true
+  enabled: false
 cart:
   enabled: true
 catalog-mysql:
-  enabled: true
+  enabled: false
 catalog:
+  enabled: true
+ui:
   enabled: true

@@ -16,37 +16,34 @@ spec:
         {{- include "orders.labels" . | nindent 8 }}
     spec:
       containers:
-      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      - image: "{{ .Values.global.ecrRegistry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: orders
         ports:
           - containerPort: {{ .Values.service.targetPort }}
         env:
           - name: RETAIL_ORDERS_PERSISTENCE_PROVIDER
-            valueFrom:
-              configMapKeyRef:
-                name: {{ include "orders.fullname" . }}
-                key: RETAIL_ORDERS_PERSISTENCE_PROVIDER
+            value: {{ .Values.global.postgres.provider }}
           - name: RETAIL_ORDERS_PERSISTENCE_ENDPOINT
             valueFrom:
-              configMapKeyRef:
+              secretKeyRef:
                 name: {{ include "orders.fullname" . }}
                 key: RETAIL_ORDERS_PERSISTENCE_ENDPOINT
           - name: RETAIL_ORDERS_PERSISTENCE_NAME
             valueFrom:
-              configMapKeyRef:
-                name: {{ .Values.global.postgres.host }}
-                key: POSTGRES_DB
+              secretKeyRef:
+                name: {{ include "orders.fullname" . }}
+                key: RETAIL_ORDERS_PERSISTENCE_NAME
           - name: RETAIL_ORDERS_PERSISTENCE_USERNAME
             valueFrom:
-              configMapKeyRef:
-                name: {{ .Values.global.postgres.host }}
-                key: POSTGRES_USER
+              secretKeyRef:
+                name: {{ include "orders.fullname" . }}
+                key: RETAIL_ORDERS_PERSISTENCE_USERNAME
           - name: RETAIL_ORDERS_PERSISTENCE_PASSWORD
             valueFrom:
               secretKeyRef:
-                name: {{ .Values.global.postgres.host }}
-                key: POSTGRES_PASSWORD
+                name: {{ include "orders.fullname" . }}
+                key: RETAIL_ORDERS_PERSISTENCE_PASSWORD
         livenessProbe:
           httpGet:
             path: {{ .Values.livenessProbe.httpGet.path }}

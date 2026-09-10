@@ -15,8 +15,9 @@ spec:
       labels:
         {{- include "cart.labels" . | nindent 8 }}
     spec:
+      serviceAccountName: {{ include "cart.fullname" . }}
       containers:
-      - image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+      - image: "{{ .Values.global.ecrRegistry }}/{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         name: cart
         ports:
@@ -27,11 +28,6 @@ spec:
               configMapKeyRef:
                 name: {{ include "cart.fullname" . }}
                 key: RETAIL_CART_PERSISTENCE_PROVIDER
-          - name: RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT
-            valueFrom:
-              configMapKeyRef:
-                name: {{ include "cart.fullname" . }}
-                key: RETAIL_CART_PERSISTENCE_DYNAMODB_ENDPOINT
           - name: RETAIL_CART_PERSISTENCE_DYNAMODB_CREATE_TABLE
             valueFrom:
               configMapKeyRef:
@@ -42,16 +38,6 @@ spec:
               configMapKeyRef:
                 name: {{ include "cart.fullname" . }}
                 key: RETAIL_CART_PERSISTENCE_DYNAMODB_TABLE_NAME
-          - name: AWS_ACCESS_KEY_ID
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "cart.fullname" . }}
-                key: AWS_ACCESS_KEY_ID
-          - name: AWS_SECRET_ACCESS_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ include "cart.fullname" . }}
-                key: AWS_SECRET_ACCESS_KEY
         livenessProbe:
           httpGet:
             path: {{ .Values.livenessProbe.httpGet.path }}
