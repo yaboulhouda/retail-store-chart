@@ -1,10 +1,10 @@
 global:
   postgres:
     provider: "postgres"
-    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-b4b57aaf-8a8a-4d4f-991b-0f8af5c8ff6b-Oyoweb"
+    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-202eac98-78c2-4ebd-871b-952fed957d77-MhHe3i"
   mysql:
     provider: "mysql"
-    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-f86b7cef-2afd-4f29-8155-30bd4b17e063-krmurb"
+    secretArn: "arn:aws:secretsmanager:eu-north-1:745838912158:secret:rds!db-dfa43ae9-5b46-4e97-bebf-edbcea18cfd0-xo9s0W"
   redis:
     provider: "redis"
   env: "dev"
